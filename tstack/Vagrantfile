@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
         p.mgmt_attach = false
         p.storage :file, :size => '30G', :type => 'qcow2'
         p.storage :file, :size => '40G', :type => 'qcow2'
-        p.storage :file, :device => :cdrom, :path => '/data/tstack/TStack-20180913.iso'
+        p.storage :file, :device => :cdrom, :path => '/data/tstack/TStack-20180927.iso'
       end
 
       # networks
@@ -65,12 +65,15 @@ Vagrant.configure("2") do |config|
         p.boot 'hd'
         p.boot 'network'
         p.mgmt_attach = false
-        p.storage :file, :size => '20G', :type => 'qcow2'
+        p.storage :file, :size => '30G', :type => 'qcow2'
       end
 
       # networks
       node.vm.network :private_network,
         :libvirt__network_name => "tstack-mgmt"
+
+      node.vm.network :private_network,
+        :libvirt__network_name => "tstack-ext"
     end
   end
 end

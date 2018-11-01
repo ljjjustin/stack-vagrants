@@ -2,6 +2,6 @@
   <name>tstack-mgmt</name>
   <bridge name='vagbr0' stp='off' delay='0'/>
   <forward mode='nat'/>
-  <ip address='10.10.10.1' netmask='255.255.255.0'>
+  <ip address='10.10.10.254' netmask='255.255.255.0'>
   </ip>
 </network>
