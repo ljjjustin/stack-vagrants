@@ -63,8 +63,8 @@ part /boot --fstype="xfs" --ondisk=vda --size=1024
 part pv.60 --fstype="lvmpv" --ondisk=vda --size=35840 --grow
 volgroup centos pv.60
 logvol swap     --vgname=centos --fstype="swap" --size=2048 --name=swap
-logvol /var/log --vgname=centos --fstype="xfs" --size=10240 --name=logs
 logvol /        --vgname=centos --fstype="xfs" --size=20480 --name=root
+logvol /var/log --vgname=centos --fstype="xfs" --size=10240 --name=logs
 
 # Packages
 %packages
