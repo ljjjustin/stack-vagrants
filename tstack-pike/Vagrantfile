@@ -1,0 +1,59 @@
+Vagrant.configure("2") do |config|
+  ## control nodes
+  (1..3).each do |i|
+    config.vm.box_check_update = false
+
+    config.vm.define "ctrl#{i}" do |node|
+      # base box
+      node.vm.box = "centos/7"
+      node.vm.box_version = "1804.02"
+
+      # hostname
+      node.vm.hostname = "tstack-con#{i}"
+
+      # provider
+      node.vm.provider "libvirt" do |p|
+        p.cpus = 4
+        p.memory = 4096
+        p.storage :file, :size => '40G', :type => 'qcow2'
+        p.storage :file, :size => '80G', :type => 'qcow2'
+        p.storage :file, :size => '80G', :type => 'qcow2'
+      end
+
+      # networks
+      node.vm.network :private_network,
+        :ip => "10.10.10.#{i+10}"
+      # provision
+      node.vm.provision "shell",
+        :inline => "/bin/bash /vagrant/bootstrap.sh"
+    end
+  end
+
+  ## compute nodes
+  (1..2).each do |i|
+    config.vm.box_check_update = false
+
+    config.vm.define "comp#{i}" do |node|
+      # base box
+      node.vm.box = "centos/7"
+      node.vm.box_version = "1804.02"
+
+      # hostname
+      node.vm.hostname = "tstack-comp#{i}"
+
+      # provider
+      node.vm.provider "libvirt" do |p|
+        p.cpus = 4
+        p.memory = 3000
+      end
+
+      # networks
+      node.vm.network :private_network,
+        :ip => "10.10.10.#{i+13}"
+      # provision
+      node.vm.provision "shell",
+        :inline => "/bin/bash /vagrant/bootstrap.sh"
+    end
+  end
+
+end
