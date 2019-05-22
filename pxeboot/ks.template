@@ -1,0 +1,94 @@
+#version=RHEL7
+# System authorization information
+auth --useshadow --passalgo=sha512
+
+# Install OS instead of upgrade
+install
+
+# License agreement
+eula --agreed
+
+# Use text mode install
+text
+
+# Use NFS installation media
+nfs --server={{NFSHOST}} --dir={{ISODIR}}
+
+# Firewall configuration
+firewall --disabled
+firstboot --disabled
+ignoredisk --only-use=vda
+
+# Keyboard layouts
+keyboard us
+
+# System language
+lang en_US.UTF-8
+
+# Installation logging level
+logging --level=debug
+
+# Network information
+network  --bootproto=dhcp --device=eth0 --noipv6 --activate
+
+# Reboot after installation
+reboot
+
+# Root password
+rootpw --plaintext r00tme
+
+# SELinux configuration
+selinux --disabled
+
+# System services
+services --disabled="NetworkManager" --enabled="network,chronyd"
+
+# Do not configure the X Window System
+skipx
+
+# System timezone
+timezone  Asia/Shanghai
+
+# System bootloader configuration
+##bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=vda
+
+# Clear the Master Boot Record
+zerombr
+
+## Partition clearing information
+clearpart --all --drives=vda
+
+# Disk partitioning information
+part /boot --fstype="xfs" --ondisk=vda --size=1024
+part pv.60 --fstype="lvmpv" --ondisk=vda --size=35840 --grow
+volgroup centos pv.60
+logvol swap     --vgname=centos --fstype="swap" --size=2048 --name=swap
+logvol /var/log --vgname=centos --fstype="xfs" --size=10240 --name=logs
+logvol /        --vgname=centos --fstype="xfs" --size=20480 --name=root
+
+# Packages
+%packages
+@^minimal
+@core
+%end
+
+##############################################
+%post
+
+# sshd: disable DNS checks
+ex -s /etc/ssh/sshd_config <<EOF
+:%substitute/^#\(UseDNS\) yes$/&\r\1 no/
+:update
+:quit
+EOF
+
+# Inject pxeboot ssh key
+mkdir -m 0700 -p /root/.ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9cibOy9l7P8I3hYTDWu+x4/unA8NhIylH+IP9vsUxphEt3SiMMfqUuCEHz15pIOqZFexAwZOWiq6BwxQxmu+/FpbTkMgSjftftzqQgUp/YXIYsEl5CxhyMZNUpDhJWiJBSGpjzkgAZcEm8ix2GBV5rZQPd2YsR2EewRnCdE9ZR+Hq7AiCPPJqy64OYsrc/enaccGAbEZxm8UT8WMFYriwyVpD25+uKlYPgdhu3TRVuoAu1HdmpVSlyO0gzIAzXvfm2MZIDOrEG8zXeyai9tpo3GZWWXZvOlT5Pk3i1asL1JWrFeI0KrOEvxW9UEwM3eK/Gcin5rq0n0N1x/ATbTmF root@pxeboot" >> /root/.ssh/authorized_keys
+chmod 600 /root/.ssh/authorized_keys
+
+# systemd should generate a new machine id
+:>/etc/machine-id
+
+%end
+##############################################
