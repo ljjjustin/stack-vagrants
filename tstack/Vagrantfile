@@ -1,7 +1,7 @@
 Vagrant.configure("2") do |config|
   ## master nodes
   (1..1).each do |i|
-    config.vm.define "tstack-ctrl#{i}" do |node|
+    config.vm.define "ctrl#{i}" do |node|
       # hostname
       node.vm.hostname = "tstack-con#{i}"
 
@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
 
   ## control nodes
   (2..3).each do |i|
-    config.vm.define "tstack-ctrl#{i}" do |node|
+    config.vm.define "ctrl#{i}" do |node|
       # hostname
       node.vm.hostname = "tstack-con#{i}"
 
@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
 
   ## compute nodes
   (1..1).each do |i|
-    config.vm.define "tstack-compute#{i}" do |node|
+    config.vm.define "compute#{i}" do |node|
       # hostname
       node.vm.hostname = "tstack-compute#{i}"
 
