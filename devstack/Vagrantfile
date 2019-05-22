@@ -1,0 +1,24 @@
+Vagrant.configure("2") do |config|
+  (1..1).each do |i|
+    config.vm.define "devstack#{i}" do |node|
+      # base box
+      node.vm.box = "centos/7"
+      node.vm.box_version = "1804.02"
+
+      # hostname
+      node.vm.hostname = "devstack#{i}"
+
+      # provider
+      node.vm.provider "libvirt" do |p|
+        p.cpus = 8
+        p.memory = 8192
+        p.storage :file, :size => '100G', :type => 'qcow2'
+      end
+
+      # networks
+      node.vm.network :private_network,
+        :ip => "192.168.56.#{i+30}"
+
+    end
+  end
+end
