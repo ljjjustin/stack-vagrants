@@ -36,12 +36,5 @@ net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 EOF
 
-# update packages
-yum install -y epel-release
-yum install -y dnsmasq xinetd syslinux nfs-utils tftp-server
-
-systemctl enable dnsmasq xinetd nfs
-
-# setup PXE environment
-cp -f pxerc ks.template update.sh /var/lib/tftpboot
-cd /var/lib/tftpboot; bash -x ./update.sh
+##  setup pxe server
+./setup.sh

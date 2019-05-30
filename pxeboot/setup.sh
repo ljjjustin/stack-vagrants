@@ -1,9 +1,31 @@
 #!/bin/bash
 
+# ensure packages
+ensure_packages() {
+    for pkg in $@
+    do
+        rpm -q ${pkg} > /dev/null
+        if [ $? -ne 0 ]; then
+            yum install -y ${pkg}
+        fi
+    done
+}
+
+ensure_packages dnsmasq xinetd syslinux nfs-utils tftp-server
+
+systemctl enable dnsmasq xinetd nfs
+
 # setup directories
 mkdir -p /var/lib/tftpboot/{images,pxelinux.cfg}
 touch /var/lib/tftpboot/pxelinux.cfg/default
 cp -rf /usr/share/syslinux/* /var/lib/tftpboot
+
+# auto change work directory
+workdir=$(cd $(dirname $0) && pwd); cd ${workdir}
+if [ "${workdir}" != "/var/lib/tftpboot" ]; then
+    cp -f pxerc ks.template setup.sh /var/lib/tftpboot
+    exec /var/lib/tftpboot/setup.sh
+fi
 
 # config all components
 source ./pxerc
@@ -45,7 +67,7 @@ nfshost=$(ip r get ${DHCP_GATEWAY} | grep -w src| awk '{print $NF}')
 cat > default <<  EOF
 DEFAULT menu.c32
 PROMPT 0
-MENU TITLE LJJ Respberry Pi PXE Server
+MENU TITLE LJJ PXE Server
 TIMEOUT 200
 TOTALTIMEOUT 6000
 ONTIMEOUT local
@@ -93,4 +115,5 @@ EOF
 
 mv -f default pxelinux.cfg
 exportfs -au
+systemctl restart nfs
 exportfs -av

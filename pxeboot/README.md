@@ -7,7 +7,7 @@
 下载CentOS系列ISO文件，将其保存到虚拟机的`/srv/`目录下，然后运行:
 
 ```bash
-cd /var/lib/tftpboot; ./update.sh
+./setup.sh
 ```
 即可更新pxe的启动菜单。装机时就可以选择不同的操作系统。
 
@@ -40,9 +40,9 @@ logvol /        --vgname=centos --fstype="xfs" --size=20480 --name=root
 
 ### 3. 更新配置
 
-修改完成之后，执行`update.sh`脚本。
+修改完成之后，执行`setup.sh`脚本。
 ```bash
-cd /var/lib/tftpboot; ./update.sh
+./setup.sh
 ```
 ## 限制
 
