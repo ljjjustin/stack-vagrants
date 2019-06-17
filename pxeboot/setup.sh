@@ -20,6 +20,14 @@ mkdir -p /var/lib/tftpboot/{images,pxelinux.cfg}
 touch /var/lib/tftpboot/pxelinux.cfg/default
 cp -rf /usr/share/syslinux/* /var/lib/tftpboot
 
+# generate ssh key pair
+if [ ! -d ~/.ssh ]; then
+    mkdir ~/.ssh
+fi
+if [ ! -f ~/.ssh/id_rsa ]; then
+    ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+fi
+
 # auto change work directory
 workdir=$(cd $(dirname $0) && pwd); cd ${workdir}
 if [ "${workdir}" != "/var/lib/tftpboot" ]; then
@@ -94,6 +102,9 @@ do
 	cp -f ks.template images/${isodir}/ks.cfg
 	sed -i "s|{{NFSHOST}}|${nfshost}|g" images/${isodir}/ks.cfg
 	sed -i "s|{{ISODIR}}|/var/lib/tftpboot/images/${isodir}/iso|g" images/${isodir}/ks.cfg
+
+        pubkey=$(cat ~/.ssh/id_rsa.pub)
+        sed -i "s|{{SSHPUBKEY}}|${pubkey}|g" images/${isodir}/ks.cfg
 
 	echo "/var/lib/tftpboot/images/${isodir} *(rw,sync,no_subtree_check,all_squash)" >> /etc/exports
 	echo "/var/lib/tftpboot/images/${isodir}/iso *(rw,sync,no_subtree_check,all_squash)" >> /etc/exports

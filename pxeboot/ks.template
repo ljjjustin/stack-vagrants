@@ -84,7 +84,7 @@ EOF
 
 # Inject pxeboot ssh key
 mkdir -m 0700 -p /root/.ssh
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9cibOy9l7P8I3hYTDWu+x4/unA8NhIylH+IP9vsUxphEt3SiMMfqUuCEHz15pIOqZFexAwZOWiq6BwxQxmu+/FpbTkMgSjftftzqQgUp/YXIYsEl5CxhyMZNUpDhJWiJBSGpjzkgAZcEm8ix2GBV5rZQPd2YsR2EewRnCdE9ZR+Hq7AiCPPJqy64OYsrc/enaccGAbEZxm8UT8WMFYriwyVpD25+uKlYPgdhu3TRVuoAu1HdmpVSlyO0gzIAzXvfm2MZIDOrEG8zXeyai9tpo3GZWWXZvOlT5Pk3i1asL1JWrFeI0KrOEvxW9UEwM3eK/Gcin5rq0n0N1x/ATbTmF root@pxeboot" >> /root/.ssh/authorized_keys
+echo "{{SSHPUBKEY}}" >> /root/.ssh/authorized_keys
 chmod 600 /root/.ssh/authorized_keys
 
 # systemd should generate a new machine id
