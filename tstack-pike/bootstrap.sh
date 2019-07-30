@@ -7,6 +7,7 @@ echo "root:r00tme!" | chpasswd
 sed -e 's/^#PermitRootLogin .*$/PermitRootLogin yes/g' \
     -e 's/^PasswordAuthentication .*$/PasswordAuthentication yes/g' \
     -e 's/^#UseDNS .*/UseDNS no/g' \
+    -e 's/^GSSAPIAuthentication .*/GSSAPIAuthentication no/g' \
     -i /etc/ssh/sshd_config
 systemctl restart sshd
 

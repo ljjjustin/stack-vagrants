@@ -1,55 +1,38 @@
+cluster = {
+
+  "tstack-ctrl1" => { :ip => "192.168.121.111", :mac => "52:54:56:00:01:01", :cpus => 4, :mem => 4096 },
+  "tstack-ctrl2" => { :ip => "192.168.121.112", :mac => "52:54:56:00:01:02", :cpus => 4, :mem => 4096 },
+  "tstack-ctrl3" => { :ip => "192.168.121.113", :mac => "52:54:56:00:01:03", :cpus => 4, :mem => 4096 },
+  "tstack-comp1" => { :ip => "192.168.121.114", :mac => "52:54:56:00:01:04", :cpus => 4, :mem => 3000 },
+  "tstack-comp2" => { :ip => "192.168.121.115", :mac => "52:54:56:00:01:05", :cpus => 4, :mem => 3000 }
+}
+
 Vagrant.configure("2") do |config|
   ## control nodes
-  (1..3).each do |i|
+  cluster.each_with_index do |(hostname, info), i|
     config.vm.box_check_update = false
 
-    config.vm.define "ctrl#{i}" do |node|
+    config.vm.define hostname do |node|
       # base box
       node.vm.box = "centos/7"
       node.vm.box_version = "1804.02"
 
       # hostname
-      node.vm.hostname = "tstack-con#{i}"
+      node.vm.hostname = hostname
 
       # provider
       node.vm.provider "libvirt" do |p|
-        p.cpus = 4
-        p.memory = 4096
+        p.cpus = info[:cpus]
+        p.memory = info[:mem]
+        p.management_network_mac = "#{info[:mac]}"
         p.storage :file, :size => '40G', :type => 'qcow2'
         p.storage :file, :size => '80G', :type => 'qcow2'
         p.storage :file, :size => '80G', :type => 'qcow2'
       end
 
       # networks
-      node.vm.network :private_network,
-        :ip => "10.10.10.#{i+10}"
-      # provision
-      node.vm.provision "shell",
-        :inline => "/bin/bash /vagrant/bootstrap.sh"
-    end
-  end
+      #node.vm.network :private_network, ip: "#{info[:ip]}"
 
-  ## compute nodes
-  (1..2).each do |i|
-    config.vm.box_check_update = false
-
-    config.vm.define "comp#{i}" do |node|
-      # base box
-      node.vm.box = "centos/7"
-      node.vm.box_version = "1804.02"
-
-      # hostname
-      node.vm.hostname = "tstack-comp#{i}"
-
-      # provider
-      node.vm.provider "libvirt" do |p|
-        p.cpus = 4
-        p.memory = 3000
-      end
-
-      # networks
-      node.vm.network :private_network,
-        :ip => "10.10.10.#{i+13}"
       # provision
       node.vm.provision "shell",
         :inline => "/bin/bash /vagrant/bootstrap.sh"
