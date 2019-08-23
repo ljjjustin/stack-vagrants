@@ -2,14 +2,14 @@
 # System authorization information
 auth --useshadow --passalgo=sha512
 
-# Install OS instead of upgrade
-install
-
 # License agreement
 eula --agreed
 
 # Use text mode install
 text
+
+# Install OS instead of upgrade
+install
 
 # Use NFS installation media
 nfs --server={{NFSHOST}} --dir={{ISODIR}}
@@ -17,7 +17,6 @@ nfs --server={{NFSHOST}} --dir={{ISODIR}}
 # Firewall configuration
 firewall --disabled
 firstboot --disabled
-ignoredisk --only-use=vda
 
 # Keyboard layouts
 keyboard us
@@ -29,7 +28,7 @@ lang en_US.UTF-8
 logging --level=debug
 
 # Network information
-network  --bootproto=dhcp --device=eth0 --noipv6 --activate
+network --bootproto=dhcp --device=eth0 --noipv6 --activate
 
 # Reboot after installation
 reboot
@@ -49,22 +48,22 @@ skipx
 # System timezone
 timezone  Asia/Shanghai
 
-# System bootloader configuration
-##bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=vda
+## Partition clearing information
+clearpart --all --initlabel
+
+# Disk partitioning information
+part /boot --fstype="xfs" --ondisk=sda --size=1024
+part pv.60 --fstype="lvmpv" --ondisk=sda --size=1 --grow
+volgroup centos pv.60
+logvol swap     --vgname=centos --fstype="swap" --name=swap --size=2048
+logvol /var/log --vgname=centos --fstype="xfs"  --name=logs --size=10240
+logvol /        --vgname=centos --fstype="xfs"  --name=root --size=1 --grow
 
 # Clear the Master Boot Record
 zerombr
 
-## Partition clearing information
-clearpart --all --drives=vda
-
-# Disk partitioning information
-part /boot --fstype="xfs" --ondisk=vda --size=1024
-part pv.60 --fstype="lvmpv" --ondisk=vda --size=35840 --grow
-volgroup centos pv.60
-logvol swap     --vgname=centos --fstype="swap" --size=2048 --name=swap
-logvol /        --vgname=centos --fstype="xfs" --size=20480 --name=root
-logvol /var/log --vgname=centos --fstype="xfs" --size=10240 --name=logs
+# System bootloader configuration
+##bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
 
 # Packages
 %packages

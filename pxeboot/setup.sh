@@ -11,14 +11,14 @@ ensure_packages() {
     done
 }
 
-ensure_packages dnsmasq xinetd syslinux nfs-utils tftp-server
+ensure_packages dnsmasq syslinux nfs-utils
 
-systemctl enable dnsmasq xinetd nfs
+systemctl enable dnsmasq nfs
 
 # setup directories
-mkdir -p /var/lib/tftpboot/{images,pxelinux.cfg}
-touch /var/lib/tftpboot/pxelinux.cfg/default
-cp -rf /usr/share/syslinux/* /var/lib/tftpboot
+mkdir -p /pxeboot/{images,pxelinux.cfg}
+touch /pxeboot/pxelinux.cfg/default
+cp -rf /usr/share/syslinux/* /pxeboot
 
 # generate ssh key pair
 if [ ! -d ~/.ssh ]; then
@@ -30,9 +30,9 @@ fi
 
 # auto change work directory
 workdir=$(cd $(dirname $0) && pwd); cd ${workdir}
-if [ "${workdir}" != "/var/lib/tftpboot" ]; then
-    cp -f pxerc ks.template setup.sh /var/lib/tftpboot
-    exec /var/lib/tftpboot/setup.sh
+if [ "${workdir}" != "/pxeboot" ]; then
+    cp -f pxerc ks.template setup.sh /pxeboot
+    exec /pxeboot/setup.sh
 fi
 
 # config all components
@@ -47,25 +47,7 @@ dhcp-option=3,${DHCP_GATEWAY}
 pxe-service=x86PC, "PXE Boot Menu", pxelinux
 dhcp-boot=pxelinux.0
 enable-tftp
-tftp-root=/var/lib/tftpboot
-EOF
-systemctl restart dnsmasq
-
-# config tftp
-cat > /etc/xinetd.d/tftp <<EOF
-service tftp
-{
-    disable = no
-    socket_type = dgram
-    protocol = udp
-    wait = yes
-    user = root
-    server = /usr/sbin/in.tftpd
-    server_args = -s /var/lib/tftpboot
-    per_source = 11
-    cps = 100 2
-    flags = IPv4
-}
+tftp-root=/pxeboot
 EOF
 systemctl restart dnsmasq
 
@@ -76,8 +58,7 @@ cat > default <<  EOF
 DEFAULT menu.c32
 PROMPT 0
 MENU TITLE LJJ PXE Server
-TIMEOUT 200
-TOTALTIMEOUT 6000
+TIMEOUT 600
 ONTIMEOUT local
 
 LABEL local
@@ -101,19 +82,19 @@ do
 	fi
 	cp -f ks.template images/${isodir}/ks.cfg
 	sed -i "s|{{NFSHOST}}|${nfshost}|g" images/${isodir}/ks.cfg
-	sed -i "s|{{ISODIR}}|/var/lib/tftpboot/images/${isodir}/iso|g" images/${isodir}/ks.cfg
+	sed -i "s|{{ISODIR}}|/pxeboot/images/${isodir}/iso|g" images/${isodir}/ks.cfg
 
         pubkey=$(cat ~/.ssh/id_rsa.pub)
         sed -i "s|{{SSHPUBKEY}}|${pubkey}|g" images/${isodir}/ks.cfg
 
-	echo "/var/lib/tftpboot/images/${isodir} *(rw,sync,no_subtree_check,all_squash)" >> /etc/exports
-	echo "/var/lib/tftpboot/images/${isodir}/iso *(rw,sync,no_subtree_check,all_squash)" >> /etc/exports
+	echo "/pxeboot/images/${isodir} *(rw,sync,no_subtree_check,all_squash)" >> /etc/exports
+	echo "/pxeboot/images/${isodir}/iso *(rw,sync,no_subtree_check,all_squash)" >> /etc/exports
 
 	cat >> default << EOS
 LABEL ${isodir}
         MENU LABEL ${isodir}
         kernel /images/${isodir}/iso/isolinux/vmlinuz
-        append initrd=/images/${isodir}/iso/isolinux/initrd.img ksdevice=bootif kssendmac ks=nfs:${nfshost}:/var/lib/tftpboot/images/${isodir}/ks.cfg
+        append initrd=/images/${isodir}/iso/isolinux/initrd.img ksdevice=bootif kssendmac ks=nfs:${nfshost}:/pxeboot/images/${isodir}/ks.cfg
         ipappend 2
 
 EOS
