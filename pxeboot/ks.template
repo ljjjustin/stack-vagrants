@@ -52,7 +52,8 @@ timezone  Asia/Shanghai
 clearpart --all --initlabel
 
 # Disk partitioning information
-part /boot --fstype="xfs" --ondisk=sda --size=1024
+part /boot --fstype="xfs" --ondisk=sda --size=512
+part /boot/efi --fstype="efi" --ondisk=sda --size=512
 part pv.60 --fstype="lvmpv" --ondisk=sda --size=1 --grow
 volgroup centos pv.60
 logvol swap     --vgname=centos --fstype="swap" --name=swap --size=2048
