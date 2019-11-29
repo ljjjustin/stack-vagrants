@@ -1,0 +1,30 @@
+cluster = {
+  "ceph1" => { :cpus => 4, :mem => 2048 },
+  "ceph2" => { :cpus => 4, :mem => 2048 },
+}
+
+script = <<-SCRIPT
+echo ""
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  cluster.each_with_index do |(hostname, info), i|
+
+    config.vm.box_check_update = false
+    config.vm.define hostname do |node|
+      # base box
+      node.vm.box = "generic/centos7"
+
+      # hostname
+      node.vm.hostname = hostname
+
+      # provider
+      node.vm.provider "parallels" do |p|
+        p.cpus = info[:cpus]
+        p.memory = info[:mem]
+      end
+      # provision
+      node.vm.provision "shell", inline => "$script"
+    end
+  end
+end
