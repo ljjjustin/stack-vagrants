@@ -2,17 +2,16 @@
 
 # auto change work directory
 workdir=$(cd $(dirname $0) && pwd)
+lvs_mode="nat"  ## nat/tun/dr
+lvs_script="./setup-lvs-${lvs_mode}.sh"
+rs_script="./setup-rs-${lvs_mode}.sh"
+
 cd ${workdir}
 
 if [[ "$(hostname)" =~ "lvs" ]]; then
-    systemctl stop firewalld
-    systemctl disable firewalld
-    ./setup-lvs.sh
+    exec ${lvs_script}
 elif [[ "$(hostname)" =~ "rs" ]]; then
-    systemctl stop firewalld
-    systemctl disable firewalld
-    ./setup-real-server.sh start
-    sudo nohup python -m SimpleHTTPServer 80 &
+    exec ${rs_script} start
 else
     echo "hostname not match, ignore"
     exit 0
