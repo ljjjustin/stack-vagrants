@@ -1,8 +1,16 @@
 #!/bin/bash
 
+# change password
+echo r00tme | passwd --stdin root
+
+# change yum config
+if ! grep -q ip_resolve /etc/yum.conf; then
+    echo "ip_resolve=4" >> /etc/yum.conf
+fi
 # auto change work directory
 workdir=$(cd $(dirname $0) && pwd)
-lvs_mode="nat"  ## nat/tun/dr
+
+lvs_mode="dr"  ## nat/tun/dr
 lvs_script="./setup-lvs-${lvs_mode}.sh"
 rs_script="./setup-rs-${lvs_mode}.sh"
 
