@@ -5,12 +5,28 @@ VIP=192.168.55.200
 LOCK=/var/lock/ipvsadm.lock
 . /etc/rc.d/init.d/functions
 
+## disable firewalld
+systemctl stop firewalld
+systemctl disable firewalld
+
+ensure_nginx() {
+    if rpm -q nginx | grep -q 'not installed'; then
+        yum install -y nginx
+    fi
+    if [ ! -e "/usr/share/nginx/html/lvsdemo" ]; then
+        echo "nginx1" > /usr/share/nginx/html/lvsdemo
+    fi
+    systemctl enable nginx
+    systemctl start nginx
+}
+
 start() {
      PID=`ifconfig | grep tunl0 | wc -l`
      if [ $PID -ne 0 ];
      then
          echo "The LVS-TUN-RIP Server is already running !"
      else
+         ensure_nginx
          #Load the tun mod
          /sbin/modprobe tun
          /sbin/modprobe ipip

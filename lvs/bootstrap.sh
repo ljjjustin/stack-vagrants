@@ -10,7 +10,7 @@ fi
 # auto change work directory
 workdir=$(cd $(dirname $0) && pwd)
 
-lvs_mode="dr"  ## nat/tun/dr
+lvs_mode="tun"  ## nat/tun/dr
 lvs_script="./setup-lvs-${lvs_mode}.sh"
 rs_script="./setup-rs-${lvs_mode}.sh"
 
