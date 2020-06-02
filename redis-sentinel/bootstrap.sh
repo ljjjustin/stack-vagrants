@@ -4,8 +4,11 @@
 echo r00tme | passwd --stdin root
 
 # disable firewall
-systemctl stop firewalld
-systemctl disable firewalld
+#systemctl stop firewalld
+#systemctl disable firewalld
+firewall-cmd --add-port=6378/tcp --permanent
+firewall-cmd --add-port=26378/tcp --permanent
+firewall-cmd --reload
 
 # disable selinux
 setenforce 0
@@ -75,6 +78,8 @@ sentinel auth-pass sdemo ${redis_pass}
 sentinel down-after-milliseconds sdemo 8000
 sentinel failover-timeout sdemo 12000
 sentinel parallel-syncs sdemo 1
+sentinel config-epoch sdemo 2
+sentinel leader-epoch sdemo 2
 EOF
 
 chown redis:redis /etc/{redis.conf,redis-sentinel.conf}
