@@ -1,0 +1,34 @@
+cluster = {
+  "mongo1" => { :cpus => 2, :mem => 736, :ip => "192.168.55.31" },
+  "mongo2" => { :cpus => 2, :mem => 736, :ip => "192.168.55.32" },
+  "mongo3" => { :cpus => 2, :mem => 736, :ip => "192.168.55.33" },
+}
+
+Vagrant.configure("2") do |config|
+  cluster.each_with_index do |(hostname, info), i|
+
+    config.vm.box_check_update = false
+    config.vm.synced_folder ".", "/vagrant", type: "rsync",
+      rsync__exclude: ".vagrant"
+    config.vm.define hostname do |node|
+      # base box
+      node.vm.box = "centos7"
+
+      # hostname
+      node.vm.hostname = hostname
+
+      # provider
+      node.vm.provider "parallels" do |p|
+        p.check_guest_tools = true
+        p.cpus = info[:cpus]
+        p.memory = info[:mem]
+      end
+      # network
+      node.vm.network "private_network", ip: info[:ip]
+
+      # provision
+      node.vm.provision "shell",
+        :inline => "sudo /bin/bash /vagrant/bootstrap.sh"
+    end
+  end
+end
