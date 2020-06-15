@@ -62,9 +62,9 @@ worker_processes 4;
 
 events {
     use epoll;
-    worker_connections 200000;
+    worker_connections 300000;
 }
-worker_rlimit_nofile 200000;
+worker_rlimit_nofile 300000;
 
 http {
     server {
