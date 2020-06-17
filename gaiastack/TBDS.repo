@@ -1,7 +1,0 @@
-[TDP-2.2]
-name=TBDS
-baseurl=http://192.168.56.11:9091/gaia-mirror
-enabled=1
-gpgcheck=0
-priority=1
-
