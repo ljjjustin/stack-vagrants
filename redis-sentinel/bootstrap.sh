@@ -6,8 +6,8 @@ echo r00tme | passwd --stdin root
 # disable firewall
 #systemctl stop firewalld
 #systemctl disable firewalld
-firewall-cmd --add-port=6378/tcp --permanent
-firewall-cmd --add-port=26378/tcp --permanent
+firewall-cmd --add-port=6379/tcp --permanent
+firewall-cmd --add-port=26379/tcp --permanent
 firewall-cmd --reload
 
 # disable selinux
