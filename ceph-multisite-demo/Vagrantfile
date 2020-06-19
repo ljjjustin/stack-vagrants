@@ -3,28 +3,35 @@ cluster = {
   "ceph2" => { :cpus => 4, :mem => 2048 },
 }
 
-script = <<-SCRIPT
-echo ""
-SCRIPT
-
 Vagrant.configure("2") do |config|
   cluster.each_with_index do |(hostname, info), i|
 
     config.vm.box_check_update = false
+
+    config.vm.synced_folder ".", "/vagrant", type: "rsync",
+      rsync__exclude: ".vagrant"
+
     config.vm.define hostname do |node|
       # base box
-      node.vm.box = "generic/centos7"
+      node.vm.box = "centos7"
 
       # hostname
       node.vm.hostname = hostname
 
-      # provider
+      # parallels provider
       node.vm.provider "parallels" do |p|
         p.cpus = info[:cpus]
         p.memory = info[:mem]
       end
+      # libvirt provider
+      ##node.vm.provider "libvirt" do |p|
+      ##  p.cpus = info[:cpus]
+      ##  p.memory = info[:mem]
+      ##  p.storage :file, :size => '30G', :type => 'qcow2'
+      ##end
       # provision
-      node.vm.provision "shell", inline => "$script"
+      node.vm.provision "shell",
+        :inline => "sudo /bin/bash /vagrant/bootstrap.sh"
     end
   end
 end
