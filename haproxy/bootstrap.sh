@@ -120,7 +120,6 @@ cat > /etc/keepalived/keepalived.conf << EOF
 ! Configuration File for keepalived
 
 global_defs {
-   vrrp_strict
 }
 
 vrrp_script chk_haproxy {
