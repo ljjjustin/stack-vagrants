@@ -1,0 +1,35 @@
+cluster = {
+  "mininet2" => { :cpus => 2, :mem => 2048, :ip => "192.168.55.32" },
+}
+
+$bootstrap = <<SCRIPT
+apt-get -y install mininet openvswitch quagga
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  cluster.each_with_index do |(hostname, info), i|
+
+    config.vm.box_check_update = false
+    config.vm.synced_folder ".", "/vagrant", type: "rsync",
+      rsync__exclude: ".vagrant"
+    config.vm.define hostname do |node|
+      # base box
+      node.vm.box = "generic/ubuntu1804"
+
+      # hostname
+      node.vm.hostname = hostname
+
+      # provider
+      node.vm.provider "parallels" do |p|
+        p.check_guest_tools = true
+        p.cpus = info[:cpus]
+        p.memory = info[:mem]
+      end
+      # network
+      node.vm.network "private_network", ip: info[:ip]
+
+      # provision
+      node.vm.provision "bootstrap", type: "shell", inline: $bootstrap
+    end
+  end
+end
