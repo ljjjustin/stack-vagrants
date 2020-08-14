@@ -31,7 +31,7 @@ EOF
 
 cat > r1bgpd.conf << EOF
 hostname r1bgpd
-password zebra
+password en
 enable password zebra
 log file ${workdir}/r1bgpd.log
 
@@ -41,16 +41,26 @@ router bgp 65000
   network 192.168.0.0/16
   redistribute connected
 
-  neighbor EXABGP peer-group
-  neighbor EXABGP remote-as 65000
+  neighbor 10.0.3.20 remote-as 65000
+  neighbor 10.0.3.20 activate
+  neighbor 10.0.3.20 soft-reconfiguration inbound
+  !neighbor 10.0.3.20 route-server-client
+  !neighbor 10.0.3.20 route-map RSCLIENT-IMPORT import
+  !neighbor 10.0.3.20 route-map RSCLIENT-EXPORT export
 
-  neighbor EXABGP activate
-  neighbor EXABGP soft-reconfiguration inbound
-  neighbor EXABGP route-server-client
-  neighbor EXABGP route-map RSCLIENT-IMPORT import
-  neighbor EXABGP route-map RSCLIENT-EXPORT export
-  neighbor 192.168.10.10 peer-group EXABGP
-  neighbor 192.168.20.10 peer-group EXABGP
+  neighbor 192.168.10.10 remote-as 65000
+  neighbor 192.168.10.10 activate
+  !neighbor 192.168.10.10 soft-reconfiguration inbound
+  !neighbor 192.168.10.10 route-server-client
+  !neighbor 192.168.10.10 route-map RSCLIENT-IMPORT import
+  !neighbor 192.168.10.10 route-map RSCLIENT-EXPORT export
+
+  neighbor 192.168.20.10 remote-as 65000
+  neighbor 192.168.20.10 activate
+  !neighbor 192.168.20.10 soft-reconfiguration inbound
+  !neighbor 192.168.20.10 route-server-client
+  !neighbor 192.168.20.10 route-map RSCLIENT-IMPORT import
+  !neighbor 192.168.20.10 route-map RSCLIENT-EXPORT export
 
 ip prefix-list LBVIP seq 5 permit 10.0.1.100/32
 ip prefix-list LBVIP seq 10 deny any
@@ -72,23 +82,33 @@ router bgp 65000
   network 192.168.0.0/16
   redistribute connected
 
-  neighbor EXABGP peer-group
-  neighbor EXABGP remote-as 65000
-  neighbor 192.168.10.10 peer-group EXABGP
-  neighbor 192.168.20.10 peer-group EXABGP
+  neighbor 10.0.3.10 remote-as 65000
+  neighbor 10.0.3.10 activate
+  neighbor 10.0.3.10 soft-reconfiguration inbound
+  !neighbor 10.0.3.10 route-server-client
+  !neighbor 10.0.3.10 route-map RSCLIENT-IMPORT import
+  !neighbor 10.0.3.10 route-map RSCLIENT-EXPORT export
 
-  neighbor EXABGP activate
-  neighbor EXABGP soft-reconfiguration inbound
-  neighbor EXABGP route-server-client
-  neighbor EXABGP route-map RSCLIENT-IMPORT import
-  neighbor EXABGP route-map RSCLIENT-EXPORT export
+  neighbor 192.168.10.10 remote-as 65000
+  neighbor 192.168.10.10 activate
+  !neighbor 192.168.10.10 soft-reconfiguration inbound
+  !neighbor 192.168.10.10 route-server-client
+  !neighbor 192.168.10.10 route-map RSCLIENT-IMPORT import
+  !neighbor 192.168.10.10 route-map RSCLIENT-EXPORT export
 
-ipv4 prefix-list LBVIP seq 5 permit 10.0.1.100/32 ge 32 le 32
-ipv4 prefix-list LBVIP seq 10 deny any
+  neighbor 192.168.20.10 remote-as 65000
+  neighbor 192.168.20.10 activate
+  !neighbor 192.168.20.10 soft-reconfiguration inbound
+  !neighbor 192.168.20.10 route-server-client
+  !neighbor 192.168.20.10 route-map RSCLIENT-IMPORT import
+  !neighbor 192.168.20.10 route-map RSCLIENT-EXPORT export
+
+ip prefix-list LBVIP seq 5 permit 10.0.1.100/32
+ip prefix-list LBVIP seq 10 deny any
 
 route-map RSCLIENT-IMPORT deny 10
 route-map RSCLIENT-EXPORT permit 10
-  match ipv4 address prefix-list LBVIP
+  match ip address prefix-list LBVIP
 EOF
 
 cat > keep1.conf << EOF
