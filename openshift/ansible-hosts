@@ -1,0 +1,42 @@
+[all]
+# all下放所有机器节点的名称
+openshift-master1
+openshift-worker1
+openshift-worker2
+
+[OSEv3:children]
+# #这里放openshfit的角色，这里有三个角色，master，node，etcd
+masters
+nodes
+etcd
+
+[OSEv3:vars]
+# #这里是openshfit的安装参数
+
+#指定ansible使用ssh的用户为root
+ansible_ssh_user=root
+
+#指定方式为origin
+openshift_deployment_type=origin
+
+#指定版本为3.11
+openshift_release=3.11
+
+openshift_enable_service_catalog=false
+openshift_clock_enabled=true
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
+openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability
+
+[masters]
+#master角色的机器名称包含
+openshift-master1
+
+[etcd]
+#etcd角色的机器名称包含
+openshift-master1
+
+[nodes]
+# node角色的机器名称包含
+openshift-master1 openshift_node_group_name='node-config-all-in-one'
+openshift-worker1 openshift_node_group_name='node-config-compute'
+openshift-worker2 openshift_node_group_name='node-config-compute'

@@ -1,0 +1,27 @@
+cluster = {
+  "perf1" => { :cpus => 2, :mem => 8192 },
+  "perf2" => { :cpus => 2, :mem => 4096 },
+}
+
+Vagrant.configure("2") do |config|
+  cluster.each_with_index do |(hostname, info), i|
+
+    config.vm.box_check_update = false
+    config.vm.define hostname do |node|
+      # base box
+      node.vm.box = "generic/ubuntu1804"
+
+      # hostname
+      node.vm.hostname = hostname
+
+      # provider
+      node.vm.provider "parallels" do |p|
+        p.cpus = info[:cpus]
+        p.memory = info[:mem]
+      end
+      # provision
+      node.vm.provision "shell",
+        :inline => "sudo apt-get install sysstats"
+    end
+  end
+end
