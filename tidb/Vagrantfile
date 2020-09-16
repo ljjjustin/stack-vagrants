@@ -1,5 +1,8 @@
 cluster = {
-  "tidb" => { :cpus => 2, :mem => 4096, :ip => "192.168.55.51" },
+  "tiup"  => { :cpus => 2, :mem => 2048, :ip => "192.168.55.51" },
+  "tidb1" => { :cpus => 2, :mem => 2048, :ip => "192.168.55.61" },
+  "tidb2" => { :cpus => 2, :mem => 2048, :ip => "192.168.55.62" },
+  "tidb3" => { :cpus => 2, :mem => 2048, :ip => "192.168.55.63" },
 }
 
 Vagrant.configure("2") do |config|

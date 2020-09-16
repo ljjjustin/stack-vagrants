@@ -1,0 +1,25 @@
+---
+
+pd_servers:
+  - host: 192.168.55.61
+    name: pd-1
+  - host: 192.168.55.62
+    name: pd-2
+  - host: 192.168.55.63
+    name: pd-3
+
+tidb_servers:
+  - host: 192.168.55.61
+  - host: 192.168.55.62
+  - host: 192.168.55.63
+
+tikv_servers:
+  - host: 192.168.55.61
+  - host: 192.168.55.62
+  - host: 192.168.55.63
+
+grafana_servers:
+  - host: 192.168.55.51
+
+monitoring_servers:
+  - host: 192.168.55.51

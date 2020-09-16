@@ -21,4 +21,11 @@ systemctl stop firewalld
 systemctl disable firewalld
 
 # install tiup
-curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
+if [[ "$(hostname)" =~ "^tiup$" ]]; then
+    set -e
+    if [[ type tiup |& grep -q 'not found' ]]; then
+        curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
+        source ~/.bash_profile
+    fi
+    tiup cluster deploy tidb-cluster v4.0.0 ./topo.yaml
+fi
