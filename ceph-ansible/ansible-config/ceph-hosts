@@ -1,0 +1,13 @@
+[mons]
+ceph1
+ceph2
+ceph3
+
+[osds]
+ceph1
+ceph2
+ceph3
+
+[ceph:children]
+mons
+osds
