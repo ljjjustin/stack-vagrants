@@ -17,6 +17,11 @@ Vagrant.configure("2") do |config|
         t.run = {path: "gen-ssh-key.sh"}
     end
 
+    config.trigger.after :up do |t|
+        t.info = "deploy ceph octopus"
+        t.run = {path: "deploy-ceph.sh"}
+    end
+
     config.vm.define hostname do |node|
       # base box
       node.vm.box = "centos77"

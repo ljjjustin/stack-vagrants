@@ -4,12 +4,11 @@
 ceph_origin: repository
 ceph_repository: community
 ceph_stable_release: octopus
-ceph_mirror: http://mirrors.aliyun.com/ceph
-ceph_stable_key: http://mirrors.aliyun.com/ceph/keys/release.asc
+ceph_mirror: http://mirrors.163.com/ceph
+ceph_stable_key: http://mirrors.163.com/ceph/keys/release.asc
 ceph_stable_repo: "{{ ceph_mirror }}/rpm-{{ ceph_stable_release }}"
 
 ## global configs
-cluster: ceph-octopus
 cephx: true
 dashboard_enabled: false
 
@@ -29,7 +28,7 @@ osd_mkfs_type: xfs
 #osd_mount_options_xfs: noatime,largeio,inode64,swalloc
 osd_objectstore: filestore
 
-#osd_scenario: collocated
+osd_scenario: collocated
 devices:
   - '/dev/sdb'
   - '/dev/sdc'

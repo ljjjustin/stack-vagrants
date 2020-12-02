@@ -61,4 +61,4 @@ cat > ~/.pip/pip.conf << EOF
 trusted-host=mirrors.aliyun.com
 index-url=https://mirrors.aliyun.com/pypi/simple/
 EOF
-pip install pecan werkzeug
+pip3 install pecan werkzeug
