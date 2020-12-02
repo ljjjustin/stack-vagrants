@@ -7,9 +7,8 @@ cd $(dirname $0)
 echo "root:r00tme" | chpasswd
 
 ## setup ssh
-unset cp
 mkdir -p /root/.ssh
-sudo cp -f .ssh/* /root/.ssh/
+/usr/bin/cp -f .ssh/* /root/.ssh/
 chown -R root:root /root/.ssh
 chmod 0400 /root/.ssh/*
 sed -e 's/^#PermitRootLogin .*$/PermitRootLogin yes/g' \
