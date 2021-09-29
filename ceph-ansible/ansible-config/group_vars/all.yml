@@ -1,6 +1,6 @@
-###########
-# PACKAGE #
-###########
+####################
+# PACKAGE          #
+####################
 ceph_origin: repository
 ceph_repository: community
 ceph_stable_release: octopus
@@ -8,19 +8,24 @@ ceph_mirror: http://mirrors.163.com/ceph
 ceph_stable_key: http://mirrors.163.com/ceph/keys/release.asc
 ceph_stable_repo: "{{ ceph_mirror }}/rpm-{{ ceph_stable_release }}"
 
-## global configs
+####################
+# GLOBAL CONFIGS   #
+####################
 cephx: true
 dashboard_enabled: false
 
-## Monitor options
+####################
+# MONITOR OPTIONS  #
+####################
 monitor_interface: eth0
 monitor_address: 0.0.0.0
 monitor_address_block: 10.211.55.0/24
 
 
-## OSD options
-journal_size: 4096 # OSD journal size in MB
-#block_db_size: -1 # block db size in bytes for the ceph-volume lvm batch. -1 means use the default of 'as big as possible'.
+####################
+# OSD options      #
+####################
+journal_size: 4096
 public_network: 10.211.55.0/24
 cluster_network: 192.168.55.0/24
 osd_mkfs_type: xfs
@@ -29,15 +34,13 @@ osd_mkfs_type: xfs
 osd_objectstore: filestore
 
 osd_scenario: collocated
-devices:
-  - '/dev/sdb'
-  - '/dev/sdc'
+devices: ['/dev/sdb', '/dev/sdc']
 # set if scenario is non-collocated
-##dedicated_devices:
-##    - /dev/sda
-##    - /dev/sdb
+##dedicated_devices: [ '/dev/sda', '/dev/sdb']
 
-## Override configs
+####################
+# Override configs #
+####################
 ceph_conf_overrides:
    mon:
      mon_allow_pool_delete: true
